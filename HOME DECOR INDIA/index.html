@@ -75,8 +75,8 @@
         "react": "https://esm.sh/react@18.2.0",
         "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
         "react-dom": "https://esm.sh/react-dom@18.2.0",
-        "lucide-react": "https://esm.sh/lucide-react@0.292.0?external=react,react-dom",
-        "framer-motion": "https://esm.sh/framer-motion@10.16.4?external=react,react-dom"
+        "lucide-react": "https://esm.sh/lucide-react@0.292.0",
+        "framer-motion": "https://esm.sh/framer-motion@10.12.16"
       }
     }
     </script>
@@ -84,7 +84,7 @@
   <body class="bg-gray-50 text-slate-800 antialiased overflow-x-hidden selection:bg-gold-500 selection:text-white">
     <div id="root"></div>
 
-    <script type="text/babel" data-type="module" data-presets="react">
+    <script type="text/babel" data-type="module" data-presets="react,typescript">
       import React, { useState, useEffect, useRef } from 'react';
       import ReactDOM from 'react-dom/client';
       import { motion, AnimatePresence, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate } from 'framer-motion';
@@ -98,6 +98,43 @@
         Facebook, Instagram, Twitter, Linkedin
       } from 'lucide-react';
 
+      // --- TYPES ---
+      
+      interface NavItem {
+        label: string;
+        href: string;
+      }
+
+      interface Service {
+        id: string;
+        title: string;
+        description: string;
+        icon: any;
+        details: string[];
+      }
+
+      interface PortfolioItem {
+        id: string;
+        title: string;
+        category: 'Kitchen' | 'Wardrobe' | 'Living' | 'Commercial';
+        imageUrl: string;
+        description?: string;
+      }
+
+      interface Feature {
+        title: string;
+        icon: any;
+        description: string;
+      }
+
+      interface TeamMember {
+        name: string;
+        role: string;
+        description: string;
+        imageUrl: string;
+        stats?: string[];
+      }
+
       // --- CONSTANTS ---
 
       const COMPANY_INFO = {
@@ -109,7 +146,7 @@
         email: "homedecorsindia739@gmail.com"
       };
 
-      const NAV_ITEMS = [
+      const NAV_ITEMS: NavItem[] = [
         { label: 'Home', href: '#home' },
         { label: 'Why Us', href: '#features' },
         { label: 'Services', href: '#services' },
@@ -118,7 +155,7 @@
         { label: 'Contact', href: '#contact' },
       ];
 
-      const FEATURES = [
+      const FEATURES: Feature[] = [
         { title: "Expert Craftsmanship", icon: Hammer, description: "Precision in every detail." },
         { title: "Years of Experience", icon: Award, description: "Over a decade of excellence." },
         { title: "On-Time Completion", icon: Clock, description: "We respect your timelines." },
@@ -129,7 +166,7 @@
         { title: "Innovative Design", icon: PenTool, description: "Modern and functional spaces." },
       ];
 
-      const SERVICES = [
+      const SERVICES: Service[] = [
         { 
           id: '1', 
           title: "Residential Interior", 
@@ -188,7 +225,7 @@
         },
       ];
 
-      const PORTFOLIO = [
+      const PORTFOLIO: PortfolioItem[] = [
         { id: '1', title: "Luxury Acrylic Kitchen", category: "Kitchen", imageUrl: "https://picsum.photos/seed/kitchen1/800/600" },
         { id: '2', title: "Modern Master Bedroom", category: "Living", imageUrl: "https://picsum.photos/seed/bed1/800/600" },
         { id: '3', title: "Executive Office Suite", category: "Commercial", imageUrl: "https://picsum.photos/seed/office1/800/600" },
@@ -199,7 +236,7 @@
         { id: '8', title: "Sliding Wardrobe", category: "Wardrobe", imageUrl: "https://picsum.photos/seed/wardrobe2/800/600" },
       ];
 
-      const TEAM = {
+      const TEAM: TeamMember = {
         name: "Er. Satyapal Singh Gill",
         role: "Founder & Principal Engineer",
         description: "An expert in interior design & modular furniture with a specialization in kitchen design and space optimization.",
@@ -210,7 +247,7 @@
       // --- COMPONENTS ---
 
       // 1. NAVBAR
-      const Navbar = () => {
+      const Navbar: React.FC = () => {
         const [isOpen, setIsOpen] = useState(false);
         const [scrolled, setScrolled] = useState(false);
 
@@ -324,8 +361,8 @@
       };
 
       // 2. HERO
-      const Hero = () => {
-        const containerRef = useRef(null);
+      const Hero: React.FC = () => {
+        const containerRef = useRef<HTMLDivElement>(null);
         const { scrollY } = useScroll();
         
         // Parallax effects
@@ -335,7 +372,7 @@
 
         const wordAnimation = {
           hidden: { opacity: 0, y: 50 },
-          visible: (i) => ({
+          visible: (i: number) => ({
             opacity: 1,
             y: 0,
             transition: {
@@ -457,8 +494,8 @@
       };
 
       // 3. FEATURES
-      const TiltCard = ({ title, description, icon: Icon, index }) => {
-        const ref = useRef(null);
+      const TiltCard: React.FC<{title: string; description: string; icon: any; index: number}> = ({ title, description, icon: Icon, index }) => {
+        const ref = useRef<HTMLDivElement>(null);
 
         const x = useMotionValue(0);
         const y = useMotionValue(0);
@@ -466,7 +503,7 @@
         const mouseX = useSpring(x, { stiffness: 500, damping: 100 });
         const mouseY = useSpring(y, { stiffness: 500, damping: 100 });
 
-        function onMouseMove({ currentTarget, clientX, clientY }) {
+        function onMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
           const { left, top, width, height } = currentTarget.getBoundingClientRect();
           x.set(clientX - left - width / 2);
           y.set(clientY - top - height / 2);
@@ -524,7 +561,7 @@
         );
       };
 
-      const Features = () => {
+      const Features: React.FC = () => {
         return (
           <section id="features" className="py-24 bg-navy-900 text-white relative overflow-hidden perspective-1000">
             {/* Decorative bg elements */}
@@ -577,7 +614,7 @@
       };
 
       // 4. SERVICES
-      const ServiceCard = ({ service, index }) => {
+      const ServiceCard: React.FC<{service: Service; index: number}> = ({ service, index }) => {
         const [isFlipped, setIsFlipped] = useState(false);
 
         return (
@@ -641,7 +678,7 @@
         );
       };
 
-      const Services = () => {
+      const Services: React.FC = () => {
         return (
           <section id="services" className="py-16 md:py-24 bg-gray-50">
             <div className="container mx-auto px-4">
@@ -679,7 +716,7 @@
       // 5. PORTFOLIO
       const categories = ['All', 'Kitchen', 'Wardrobe', 'Living', 'Commercial'];
 
-      const Portfolio = () => {
+      const Portfolio: React.FC = () => {
         const [filter, setFilter] = useState('All');
 
         const filteredItems = filter === 'All' 
@@ -795,7 +832,7 @@
       };
 
       // 6. ABOUT
-      const About = () => {
+      const About: React.FC = () => {
         return (
           <section id="about" className="py-24 bg-white overflow-hidden relative">
             {/* Background Decor */}
@@ -902,7 +939,7 @@
       };
 
       // 7. CONTACT
-      const Contact = () => {
+      const Contact: React.FC = () => {
         return (
           <section id="contact" className="py-24 bg-white relative">
             <div className="container mx-auto px-4">
@@ -1024,7 +1061,7 @@
       };
 
       // 8. FOOTER
-      const Footer = () => {
+      const Footer: React.FC = () => {
         const containerVariants = {
           hidden: { opacity: 0 },
           visible: {
